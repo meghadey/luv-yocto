@@ -1,0 +1,4 @@
+#List of architectures supported by LUV
+qemux86-64
+qemux86
+qemuarm64
