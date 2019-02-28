@@ -4,23 +4,6 @@ build the Linux UEFI Validation distribution.
 
 Please see the corresponding sections below for details.
 
-
-Dependencies
-============
-
-This layer depends on:
-
-  URI: git://git.openembedded.org/bitbake
-  branch: master
-
-  URI: git://git.openembedded.org/openembedded-core
-  layers: meta
-  branch: master
-
-  URI: git://git.yoctoproject.org/poky
-  branch: master
-
-
 Patches
 =======
 
@@ -45,7 +28,7 @@ General Project Administration
 ------------------------------
 M: Megha Dey <megha.dey@intel.com>
 R: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-T: https://github.com/intel/luv-yocto.git
+T: https://github.com/intel/meta-luv.git
 
 x86
 M: Megha Dey <megha.dey@intel.com>
@@ -57,66 +40,15 @@ M: Naresh Bhat <naresh.bhat@linaro.org>
 Table of Contents
 =================
 
-    I. Setting LUV build system
-   II. Using GIT with a proxy
-  III. Building LUV
-   IV. Executing ACPI NFIT destructive tests
-    V. Use of Netconsole in LUV
-   VI. Obtaining debug information
-  VII. Other LUV boot parameters
- VIII. Submitting results to a remote location
-   IX. Add parameters to disable/enable the testsuites independently
+    I. Executing ACPI NFIT destructive tests
+   II. Use of Netconsole in LUV
+  III. Obtaining debug information
+   IV. Other LUV boot parameters
+    V. Submitting results to a remote location
+   VI. Add parameters to disable/enable the testsuites independently
 
 
-I. Setting LUV build system
-===========================
-
-LUV uses additional layers to build correctly. The meta-luv layer
-provides the LUV-specific software component needed to run tests
-and compile results. The meta-oe layer provides a collection of
-auxiliary packages needed when building a live image.
-
-A script "luv-setup" is provided in the root directory of the source code.
-After cloning the repo. one needs to do:
-. luv-setup
-to setup the default DISTRO out of the box, along with adding luv-specific
-layers to BBLAYERS. By default, MACHINE is set to qemux86-64 and can be
-changed if one wishes to build for any other type of system.
-
-II. Using GIT with a proxy
-==========================
-
-To use git with a proxy, you must use an external git proxy command.
-To do so:
-1. Copy the site.conf.sample file from meta-poky/conf/ to build/conf/
-2. Rename this file as site.conf
-3. Uncomment the following in site.conf
-            GIT_PROXY_COMMAND ?= "oe-git-proxy"
-4. Replace "oe-git-proxy" with the git proxy command script on your
-   host system.
-
-III. Building LUV
-=================================================
-
-LUV can boot from either a local network or a disk. The process to build
-is slightly different for each case.
-
-By default, we build from a physical disk (DISTRO = "luv" in local.conf).
-One simply needs to do:
-
-  bitbake luv-live-image
-
-If you intend to build an image to boot from a local network, then it is
-necessary to specify the luv-netboot distribution in local.conf.
-e.g.:
-
-  DISTRO = "luv-netboot"
-
-Afterwards, you can simply do:
-
-  bitbake luv-netboot-image
-
-IV. Executing ACPI NFIT destructive tests
+I. Executing ACPI NFIT destructive tests
 =================================================
 
 The NDCTL test suite includes a batch of destructive tests. These are
@@ -127,7 +59,7 @@ command that loads the Linux kernel. The file to implement this change
 is EFI/BOOT/grub.cfg located in the bootable partition of the LUV
 media.
 
-V. Use of Netconsole in LUV
+II. Use of Netconsole in LUV
 =================================================
 
 Netconsole is a Linux feature and a kernel module that sends all
@@ -212,7 +144,7 @@ inet addr is the IP address we are looking for.
 Choose port numbers which are not reserved for any kernel activities
 like 4000's and above. port 64001 is chosen in luv-netconsole.
 
-VI. Obtaining debug information
+III. Obtaining debug information
 =================================================
 
 Sometimes is the execution of tests may end unexpectedly. In this kind
@@ -227,7 +159,7 @@ When luv.debug is enabled, the LUV test manager will leave a file
 named luv-debug.log inside the time-stamped directory luv-results-
 yyyy-mm-dd--hh-mm--ss with the debug data it collected.
 
-VII. Other LUV boot parameters
+IV. Other LUV boot parameters
 =================================================
 
 These parameters can be also added to the linux kernel command line
@@ -259,7 +191,7 @@ to alter the default behaviour of LUV.
     pstore_post_reboot_tests would run. Without this parameter, only the
     pstore_tests test would run.
 
-VIII. Submitting results to a remote location
+V. Submitting results to a remote location
 ==============================================
 
 When LUV boots via network (netboot), there is no way of storing the results
@@ -301,7 +233,7 @@ upload.php
 
 If you do not have a server setup or do not have a upload.php script, please
 follow the documentation
-https://github.com/intel/luv-yocto/wiki/Send--LUV-test-results-to-an-HTTP-server
+https://github.com/intel/meta-luv/wiki/Send--LUV-test-results-to-an-HTTP-server
 
 Configuring a LUV client
 ------------------------
@@ -315,15 +247,15 @@ Note: Editing is possible only in Linux systems as luv.cfg is available in boot
 Netboot: In netboot image, a script is employed to edit as netboot image is an
 EFI binary and is available in meta-luv/utils/modify_luv_params_efi.py
 
-$ cd luv-yocto/meta-luv/utils/
-luv-yocto/meta-luv/utils$ ls
+$ cd meta-luv/utils/
+meta-luv/utils$ ls
 modify_luv_params_efi.py
 
 For the usage of the script please follow the instructions at
-https://github.com/intel/luv-yocto/wiki page.
+https://github.com/intel/meta-luv/wiki page.
 
-Add parameters to disable/enable the testsuites independently
--------------------------------------------------------------
+VI. Add parameters to disable/enable the testsuites independently
+=================================================================
 While the boot parameter "noluv" disables all the testsuites, LUV does
 not provide any parameter that explicitly enables/disables a specific testsuite.
 To provide such flexibility of enabling or disabling any specific testsuite(s),
@@ -338,7 +270,7 @@ represents the testsuite when needed.
 Netboot: In netboot image, a script is employed to edit as netboot image is an
 EFI binary and is available in meta-luv/utils/modify_luv_params_efi.py
 
-$ cd luv-yocto/meta-luv/utils/
-luv-yocto/meta-luv/utils$ ls
+$ cd meta-luv/utils/
+meta-luv/utils$ ls
 modify_luv_params_efi.py
 
